@@ -1,6 +1,10 @@
 package main
 
-import "github.com/integrii/flaggy"
+import (
+	"fmt"
+
+	"github.com/integrii/flaggy"
+)
 
 // Declare variables and their defaults
 var (
@@ -15,10 +19,8 @@ func main() {
 	flaggy.String(&stringFlag, "s", "string", "A test string flag")
 	flaggy.Int(&intFlag, "i", "int", "int value")
 	flaggy.AddPositionalValue(&actionFlag, "action", 1, true, "action")
-
-	// Parse the flag
 	flaggy.Parse()
 
 	// Use the flag
-	println(stringFlag, intFlag, actionFlag)
+	fmt.Println(stringFlag, intFlag, actionFlag)
 }
