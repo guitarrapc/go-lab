@@ -5,17 +5,61 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"regexp"
+	"regexp/syntax"
+	"strings"
+
+	regexast "github.com/guitarrapc/go-lab/regexLab/regexast"
 )
 
 func main() {
-	pattern := regexp.MustCompile(`^D:/GitHub/guitarrapc/MixedContentChecker/csharp/src/.*/bin/.+/netcoreapp2.2$`)
-	dirs, err := dirwalk(`D:\GitHub\guitarrapc\MixedContentChecker`, true)
+	args := []string{
+		`^D:/GitHub/guitarrapc/MixedContentChecker/csharp/src/.*/bin/.+/netcoreapp2.2$`,
+		`^D:/GitHub/ghoasd.*`,
+		`^D:/asdf\d{0}/ghoasd.*`,
+		`^C:/Users/ikiru\.yoshizaki/Documents/Git/guitarrapc/Log4NetConfigurations/src/.*/bin/Debug$`,
+	}
+	for _, arg := range args {
+		basePath, err := getBasePath(arg)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+
+		pattern := regexp.MustCompile(arg)
+		dirs, err := dirwalk(basePath, true)
+		if err != nil {
+			fmt.Println(err)
+		}
+		for _, dir := range dirs {
+			fmt.Println(pattern.MatchString(dir), dir)
+		}
+	}
+}
+
+func getBasePath(path string) (string, error) {
+	asts, err := regexast.ParseRegex(path, syntax.Perl)
 	if err != nil {
-		fmt.Println(err)
+		//fmt.Println(err)
+		return "", err
 	}
-	for _, dir := range dirs {
-		fmt.Println(pattern.MatchString(dir), dir)
+
+	var b strings.Builder
+	begin := false
+	// for _, a := range asts {
+	// 	fmt.Println(a)
+	// }
+	for _, a := range asts {
+		if begin && !a.IsRune {
+			break
+		}
+		if begin && a.IsRune {
+			b.WriteString(a.Value)
+		}
+		if a.IsStart {
+			begin = true
+		}
 	}
+	return b.String(), nil
 }
 
 func dirwalk(path string, toSlash bool) (fullPaths []string, err error) {
