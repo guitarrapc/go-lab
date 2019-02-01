@@ -107,25 +107,16 @@ func parseInst(i *syntax.Inst) (op string, isRune bool, value string) {
 		if i.Rune == nil {
 			// shouldn't happen
 			op = "rune <nil>"
-			isRune = true
-			value = ""
 		}
-		op = "rune"
+		op = op + "rune"
 		isRune = true
-		//value = strconv.QuoteToASCII(string(i.Rune))
 		value = string(i.Rune)
 		if syntax.Flags(i.Arg)&syntax.FoldCase != 0 {
-			op = "/i"
-			isRune = true
-			value = ""
+			op = op + " /i"
 		}
-		op = ""
-		isRune = true
-		value = ""
 	case syntax.InstRune1:
 		op = "rune1"
 		isRune = true
-		//value = strconv.QuoteToASCII(string(i.Rune))
 		value = string(i.Rune)
 	case syntax.InstRuneAny:
 		op = "any"
