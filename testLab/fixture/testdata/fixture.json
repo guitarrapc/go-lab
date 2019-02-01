@@ -1,0 +1,25 @@
+{
+    "test_cases": [
+        {
+            "title" : "directory_exists_cases", "case" : [
+                {"result": true, "path": "C:/Users/ikiru.yoshizaki/go/src"},
+                {"result": true, "path": "C:/Users/ikiru.yoshizaki/go/src/github.com"},
+                {"result": true, "path": "C:/Users/ikiru.yoshizaki/go/src/github.com/guitarrapc"}
+            ]
+        },
+        {
+            "title" : "directory_not_exists_cases", "case" : [
+                {"result": false, "path": "C:/Users/ikiru.yoshizaki/go/hoge"},
+                {"result": false, "path": "C:/Users/ikiru.yoshizaki/go/hogemoge"},
+                {"result": false, "path": "C:/Users/ikiru.yoshizaki/go/fugafuga"}
+            ]
+        },
+        {
+            "title" : "file_exists_cases", "case" : [
+                {"result": false, "path": "C:/Users/ikiru.yoshizaki/.gitconfig"},
+                {"result": false, "path": "C:/Users/ikiru.yoshizaki/.gitignore_global"},
+                {"result": false, "path": "C:/Users/ikiru.yoshizaki/.scoop"}
+            ]
+        }
+    ]
+}
