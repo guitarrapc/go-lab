@@ -30,7 +30,7 @@ func TestMain(m *testing.M) {
 }
 
 func prepareTestData() {
-	b, err := ioutil.ReadFile("testdata/fixture.json")
+	b, err := ioutil.ReadFile("testdata/fixture.golden")
 	if err != nil {
 		log.Fatal(err)
 	}
