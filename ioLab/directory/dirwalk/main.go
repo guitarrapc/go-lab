@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
-	"regexp"
 	"regexp/syntax"
 	"strings"
+	"unicode/utf8"
 
 	regexast "github.com/guitarrapc/go-lab/regexLab/regexast"
 )
@@ -24,15 +24,16 @@ func main() {
 			fmt.Println(err)
 			continue
 		}
+		fmt.Println(basePath)
 
-		pattern := regexp.MustCompile(arg)
-		dirs, err := dirwalk(basePath, true)
-		if err != nil {
-			fmt.Println(err)
-		}
-		for _, dir := range dirs {
-			fmt.Println(pattern.MatchString(dir), dir)
-		}
+		// pattern := regexp.MustCompile(arg)
+		// dirs, err := dirwalk(basePath, true)
+		// if err != nil {
+		// 	fmt.Println(err)
+		// }
+		// for _, dir := range dirs {
+		// 	fmt.Println(pattern.MatchString(dir), dir)
+		// }
 	}
 }
 
@@ -59,7 +60,15 @@ func getBasePath(path string) (string, error) {
 			begin = true
 		}
 	}
-	return b.String(), nil
+
+	// check path is valid and fix
+	r := b.String()
+	if getLastRune(r, 1) != "/" {
+		l := strings.LastIndex(r, "/")
+		//r = string([]rune(r)[:l+1])
+		r = substring(r, 0, l+1)
+	}
+	return r, nil
 }
 
 func dirwalk(path string, toSlash bool) (fullPaths []string, err error) {
@@ -85,4 +94,25 @@ func dirwalk(path string, toSlash bool) (fullPaths []string, err error) {
 		}
 	}
 	return
+}
+
+func getLastRune(s string, c int) string {
+	j := len(s)
+	for i := 0; i < c && j > 0; i++ {
+		_, size := utf8.DecodeLastRuneInString(s[:j])
+		j -= size
+	}
+	return s[j:]
+}
+
+func substring(str string, start int, length int) string {
+	if start < 0 || length <= 0 {
+		return str
+	}
+	r := []rune(str)
+	if start+length > len(r) {
+		return string(r[start:])
+	} else {
+		return string(r[start : start+length])
+	}
 }
