@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
+	"regexp"
 	"regexp/syntax"
 	"strings"
 	"unicode/utf8"
@@ -13,9 +14,13 @@ import (
 
 func main() {
 	args := []string{
+		`^D:/GitHub/guitarrapc/MixedContent.*/csharp/src/.*/bin/.+/netcoreapp2.2$`,
 		`^D:/GitHub/guitarrapc/MixedContentChecker/csharp/src/.*/bin/.+/netcoreapp2.2$`,
+		`^D:/GitHub/ghoasd/`,
+		`^D:/GitHub/ghoasd世界/.*`,
 		`^D:/GitHub/ghoasd.*`,
 		`^D:/asdf\d{0}/ghoasd.*`,
+		`^D:/GitHub/ghoasd.*hogemoge/fugafuga/.*gua/`,
 		`^C:/Users/ikiru\.yoshizaki/Documents/Git/guitarrapc/Log4NetConfigurations/src/.*/bin/Debug$`,
 	}
 	for _, arg := range args {
@@ -26,14 +31,16 @@ func main() {
 		}
 		fmt.Println(basePath)
 
-		// pattern := regexp.MustCompile(arg)
-		// dirs, err := dirwalk(basePath, true)
-		// if err != nil {
-		// 	fmt.Println(err)
-		// }
-		// for _, dir := range dirs {
-		// 	fmt.Println(pattern.MatchString(dir), dir)
-		// }
+		pattern := regexp.MustCompile(arg)
+		dirs, err := dirwalk(basePath, true)
+		if err != nil {
+			fmt.Println(err)
+		}
+		for _, dir := range dirs {
+			if pattern.MatchString(dir) {
+				fmt.Println(pattern.MatchString(dir), dir)
+			}
+		}
 	}
 }
 
@@ -46,11 +53,20 @@ func getBasePath(path string) (string, error) {
 
 	var b strings.Builder
 	begin := false
+
 	// for _, a := range asts {
 	// 	fmt.Println(a)
 	// }
+
+	var s string
 	for _, a := range asts {
 		if begin && !a.IsRune {
+			// check path is valid and fix
+			s = b.String()
+			if getLastRune(s, 1) != "/" {
+				i := strings.LastIndex(s, "/") + 1
+				s = string(s[:i])
+			}
 			break
 		}
 		if begin && a.IsRune {
@@ -61,14 +77,7 @@ func getBasePath(path string) (string, error) {
 		}
 	}
 
-	// check path is valid and fix
-	r := b.String()
-	if getLastRune(r, 1) != "/" {
-		l := strings.LastIndex(r, "/")
-		//r = string([]rune(r)[:l+1])
-		r = substring(r, 0, l+1)
-	}
-	return r, nil
+	return s, nil
 }
 
 func dirwalk(path string, toSlash bool) (fullPaths []string, err error) {
@@ -112,7 +121,7 @@ func substring(str string, start int, length int) string {
 	r := []rune(str)
 	if start+length > len(r) {
 		return string(r[start:])
-	} else {
-		return string(r[start : start+length])
 	}
+
+	return string(r[start : start+length])
 }
