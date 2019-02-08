@@ -31,6 +31,7 @@ func main() {
 		case ei := <-c:
 			if pattern.MatchString(ei.Path()) {
 				log.Println("Got event:", ei)
+
 				// file event have many subevents.
 				// switch to use appropriate event.
 				// match event: https://github.com/rjeczalik/notify/issues/10#issuecomment-66179535
@@ -46,7 +47,15 @@ func main() {
 				case notify.FileActionRenamedOldName:
 					log.Println("renamedOldName!!!!!", filepath.Base(ei.Path()))
 				}
+
+				if isFileActionAdded(ei.Event()) {
+					log.Println("added wow!!!!!", filepath.Base(ei.Path()))
+				}
 			}
 		}
 	}
+}
+
+func isFileActionAdded(e notify.Event) bool {
+	return e == notify.FileActionAdded
 }
