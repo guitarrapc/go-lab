@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 	"path/filepath"
 	"regexp"
 
@@ -25,11 +26,12 @@ func main() {
 
 	pattern := regexp.MustCompile(".*\\.log")
 
+	var current os.FileInfo
 	// Block until an event is received.
 	for {
 		select {
 		case ei := <-c:
-			if pattern.MatchString(ei.Path()) {
+			if pattern.MatchString(filepath.Base(ei.Path())) {
 				log.Println("Got event:", ei)
 
 				// file event have many subevents.
@@ -38,12 +40,30 @@ func main() {
 				switch ei.Event() {
 				case notify.FileActionAdded:
 					log.Println("added!!!!!", filepath.Base(ei.Path()))
+					fi, err := os.Stat(ei.Path())
+					if err != nil {
+						log.Println("error happen checking.", ei.Path(), err)
+					}
+					current = fi
 				case notify.FileActionModified:
 					log.Println("modified!!!!!", filepath.Base(ei.Path()))
 				case notify.FileActionRemoved:
 					log.Println("removed!!!!!", filepath.Base(ei.Path()))
 				case notify.FileActionRenamedNewName:
 					log.Println("renamedNewName!!!!!", filepath.Base(ei.Path()))
+
+					fi, err := os.Stat(ei.Path())
+					if err != nil {
+						log.Println("error happen checking.", ei.Path(), err)
+					}
+					if current == nil {
+						current = fi
+						break
+					}
+					log.Println(fi.ModTime(), current.ModTime())
+					if fi.ModTime().After(current.ModTime()) {
+						log.Println("detected newer file.")
+					}
 				case notify.FileActionRenamedOldName:
 					log.Println("renamedOldName!!!!!", filepath.Base(ei.Path()))
 				}
@@ -53,6 +73,7 @@ func main() {
 				}
 			}
 		}
+		log.Println("current is: ", current)
 	}
 }
 
