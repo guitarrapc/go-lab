@@ -14,6 +14,7 @@ func main() {
 		log.Fatal(err)
 		return
 	}
+	watcher.Close()
 	path := "C:/Users/ikiru.yoshizaki/go/src/github.com/guitarrapc/go-lab/ioLab/filesystem_watcher/winfsnotify/logs"
 	err = watcher.AddWatch(path, winfsnotify.FS_CREATE)
 	if err != nil {
