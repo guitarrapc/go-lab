@@ -1,4 +1,4 @@
-module github.com/guitarrapc/go-lab
+module main
 
 go 1.12
 

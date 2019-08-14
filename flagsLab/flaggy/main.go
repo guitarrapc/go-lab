@@ -13,6 +13,9 @@ var (
 	actionFlag string
 )
 
+// go run main.go hogemnoge -s=hoge -i=1
+// go run main.go -s hoge -i 1 fff
+// go run main.go -s=hoge -i=1 fff
 func main() {
 
 	// Add a flag
