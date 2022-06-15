@@ -20,20 +20,18 @@ cd client && go build && client.exe
 ## Reproduce how to create projects
 
 ```bash
-mkdir server
-cd server
-go mod init github.com/guitarrapc/go-grpc/server
-go get
-go build
+mkdir grpc
+go mod init github.com/guitarrapc/go-lab/server
+mkdir cmd/grpcserver
+mkdir cmd/grpcclient
+# place code to cmd/grpcserver/main.go
+# place code to cmd/grpcclient/main.go
+go get ./cmd/grpcclient
+go get ./cmd/grpcserver
+go build ./cmd/grpcclient
+go build ./cmd/grpcserver
 ```
 
-```bash
-mkdir client
-cd client
-go mod init github.com/guitarrapc/go-grpc/client
-go get
-go build
-```
 
 ## Docker and Compose
 

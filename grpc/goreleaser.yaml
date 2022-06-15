@@ -1,5 +1,8 @@
+before:
+  hooks:
+    - go mod download
 builds:
-  - main: ./grpcclient
+  - main: ./cmd/grpcclient
     id: grpcclient
     binary: grpcclient
     goos:
@@ -11,7 +14,7 @@ builds:
         goarch: "386"
       - goos: windows
         goarch: "386"
-  - main: ./grpcserver
+  - main: ./cmd/grpcserver
     id: grpcserver
     binary: grpcserver
     goos:
