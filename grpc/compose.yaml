@@ -1,0 +1,22 @@
+services:
+  client:
+    depends_on:
+    - server
+    build:
+      context: grpcclient
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - ./grpcclient/:/go/src/app
+    tty: true
+    environment:
+      - SERVER_ENDPOINT=server:50051
+
+  server:
+    build:
+      context: grpcserver
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - ./grpcserver/:/go/src/app
+    tty: true
