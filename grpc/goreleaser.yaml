@@ -6,6 +6,11 @@ builds:
       - linux
       - darwin
       - windows
+    ignore:
+      - goos: darwin
+        goarch: "386"
+      - goos: windows
+        goarch: "386"
   - main: ./grpcserver
     id: grpcserver
     binary: grpcserver
@@ -13,6 +18,11 @@ builds:
       - linux
       - darwin
       - windows
+    ignore:
+      - goos: darwin
+        goarch: "386"
+      - goos: windows
+        goarch: "386"
 archives:
   - format: binary
     name_template: "{{ .Binary }}-{{ .Os }}-{{ .Arch }}"
