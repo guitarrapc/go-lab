@@ -1,1 +1,1 @@
-go-playground
+go-lab
