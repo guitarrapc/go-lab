@@ -22,3 +22,11 @@ jobs:
           version: latest
           args: release --snapshot --rm-dist
           workdir: grpc
+      - name: Docker build
+        run: |
+          set -euo pipefail
+          export PATH="$(go env GOPATH)/bin:$PATH"
+          set -x
+          docker build -t grpcclient -f cmd/grpcclient/Dockerfile --target prod .
+          docker build -t grpcserver -f cmd/grpcserver/Dockerfile --target prod .
+        working-directory: grpc
