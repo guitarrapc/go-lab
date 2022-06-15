@@ -1,0 +1,50 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+env:
+  OWNER: guitarrapc
+  IMAGE_NAME: go-lab
+  DOCKER_BUILDKIT: 1
+
+jobs:
+  grpc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version: 1.18
+      - name: Docker login
+        run: docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
+        env:
+          DOCKER_USER: ${{ secrets.SYNCED_DOCKER_USER }}
+          DOCKER_PASS: ${{ secrets.SYNCED_DOCKER_PASS }}
+      - name: Docker build
+        run: |
+          set -euo pipefail
+          tag="$(git describe --tag --always --dirty)"
+          export PATH="$(go env GOPATH)/bin:$PATH"
+          set -x
+          docker build -t ${{ env.OWNER }}/${{ env.IMAGE_NAME }}:grpcclient-latest -f cmd/grpcclient/Dockerfile --target prod .
+          docker build -t ${{ env.OWNER }}/${{ env.IMAGE_NAME }}:grpcserver-latest -f cmd/grpcserver/Dockerfile --target prod .
+
+          docker tag ${{ env.OWNER }}/${{ env.IMAGE_NAME }}:grpcclient-latest ${{ env.OWNER }}/${{ env.IMAGE_NAME }}:grpcclient-${tag}
+          docker tag ${{ env.OWNER }}/${{ env.IMAGE_NAME }}:grpcserver-latest ${{ env.OWNER }}/${{ env.IMAGE_NAME }}:grpcserver-${tag}
+
+          docker push ${{ env.OWNER }}/${{ env.IMAGE_NAME }}:grpcclient-latest
+          docker push ${{ env.OWNER }}/${{ env.IMAGE_NAME }}:grpcclient-${tag}
+
+          docker push ${{ env.OWNER }}/${{ env.IMAGE_NAME }}:grpcserver-latest
+          docker push ${{ env.OWNER }}/${{ env.IMAGE_NAME }}:grpcserver-${tag}
+        working-directory: grpc
+      - name: GoReleaser (grpc)
+        uses: goreleaser/goreleaser-action@v3
+        with:
+          version: latest
+          args: release --snapshot --rm-dist
+          workdir: grpc
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
