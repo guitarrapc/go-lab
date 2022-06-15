@@ -21,7 +21,7 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . ${ROOT}
-RUN GOOS=linux go build -o $ROOT/binary ${ROOT}/cmd/grpcclient/
+RUN CGO_ENABLED=0 GOOS=linux go build -o $ROOT/binary ${ROOT}/cmd/grpcclient/
 
 
 FROM scratch as prod
