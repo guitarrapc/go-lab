@@ -1,4 +1,4 @@
-module github.com/guitarrapc/go-grpc/grpcclient
+module github.com/guitarrapc/go-lab/grpc
 
 go 1.18
 

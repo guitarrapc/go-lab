@@ -1,0 +1,31 @@
+before:
+  hooks:
+    - go mod download
+builds:
+  - main: ./cmd/grpcclient
+    id: grpcclient
+    binary: grpcclient
+    goos:
+      - linux
+      - darwin
+      - windows
+    ignore:
+      - goos: darwin
+        goarch: "386"
+      - goos: windows
+        goarch: "386"
+  - main: ./cmd/grpcserver
+    id: grpcserver
+    binary: grpcserver
+    goos:
+      - linux
+      - darwin
+      - windows
+    ignore:
+      - goos: darwin
+        goarch: "386"
+      - goos: windows
+        goarch: "386"
+archives:
+  - format: binary
+    name_template: "{{ .Binary }}-{{ .Os }}-{{ .Arch }}"
