@@ -1,0 +1,34 @@
+name: build
+
+on:
+  push:
+    branches:
+      - "main"
+  pull_request:
+    branches:
+      - "main"
+
+jobs:
+  goreleaser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version: 1.18
+      - name: build grpcserver
+        uses: thatisuday/go-cross-build@v1
+        with:
+          platforms: "linux/amd64, darwin/amd64, windows/amd64"
+          package: "grpc/grpcserver"
+          name: "grpcserver"
+          compress: "false"
+          dest: "dist"
+      - name: build grpcclient
+        uses: thatisuday/go-cross-build@v1
+        with:
+          platforms: "linux/amd64, darwin/amd64, windows/amd64"
+          package: "grpc/grpcclient"
+          name: "grpcclient"
+          compress: "false"
+          dest: "dist"
