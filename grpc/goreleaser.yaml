@@ -1,32 +1,18 @@
-before:
-  hooks:
-    - go mod download
 builds:
   - main: ./grpcclient
+    id: grpcclient
     binary: grpcclient
-    env:
-      - CGO_ENABLED=0
     goos:
       - linux
       - darwin
       - windows
-    goarch:
-      - amd64
-      - arm64
   - main: ./grpcserver
+    id: grpcserver
     binary: grpcserver
-    env:
-      - CGO_ENABLED=0
     goos:
       - linux
       - darwin
       - windows
-    goarch:
-      - amd64
-      - arm64
-checksum:
-  name_template: "checksums.txt"
-  algorithm: sha256
 archives:
   - format: binary
     name_template: "{{ .Binary }}-{{ .Os }}-{{ .Arch }}"
