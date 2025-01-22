@@ -20,7 +20,7 @@ jobs:
         uses: goreleaser/goreleaser-action@v3
         with:
           version: latest
-          args: release --snapshot --rm-dist
+          args: release --snapshot --clean
           workdir: grpc
       - name: Docker build
         run: |
